@@ -29,12 +29,15 @@ Features
 * Easy loading of helper modules into template namespaces
 * '#!/usr/bin/env isurus' works for executable templates
 
-NOTE: Isurus is not particularly efficient with memory use. For
-various reasons, it is easiest to read full templates into memory
-as strings and this is not a problem for my intended use cases,
-which are mostly command-line applications. It may present problems
-as a general library, however. In such cases, it might be better
-to use the original Mako library interfaces.
+Limitations
+-----------
+
+Isurus is not particularly efficient with memory use. For various
+reasons, it is easiest to read full templates into memory as strings
+and this is not a problem for my intended use cases, which are mostly
+command-line applications. It may present problems as a general library,
+however. In such cases, it might be better to use the original Mako
+library interfaces.
 
 Examples
 --------
