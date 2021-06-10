@@ -31,7 +31,8 @@ class Isurus:
     .. code-block:: python
 
       import isurus
-      input = 'asdf <% myvar = 1 %> ${myvar} fdsa ${str(pandas.DataFrame)}'
+      # some mako template
+      input = 'X <% myvar = 1 %> ${myvar} ${str(pandas.DataFrame)}'
       template = isurus.Isurus(input)
       template.add_import('pandas')
       print(template)
@@ -51,7 +52,6 @@ class Isurus:
     input: str
     markdown: bool = False
     save: bool = False
-    savefile: str = f"isurus_{datestamp()}.mako"
     _pre: typing.List[int] = attr.Factory(list)
     _post: typing.List[int] = attr.Factory(list)
     _imports: typing.Set[str] = attr.Factory(set)
@@ -94,8 +94,9 @@ class Isurus:
         tmpl = self.template()
         if self.save:
             logging.info(f"saving complete intermediate template...")
-            open(self.savefile, 'w').write(tmpl)
-            logging.info(f"created intermediate template: {self.savefile}")
+            savefile = f"isurus_{datestamp()}.mako"
+            open(savefile, 'w').write(tmpl)
+            logging.info(f"saved intermediate template: {savefile}")
         try:
             return(mako.template.Template(text=tmpl, lookup=lookup).render())
         except Exception as e:
