@@ -10,10 +10,7 @@ home-page = "https://github.com/datagazing/isurus"
 classifiers = [ "License :: OSI Approved :: MIT License",]
 description-file = "README.rst"
 requires-python = ">=3.7"
-requires = [
-    "attrs",
-    "Mako",
-]
+requires = ["attrs", "Mako", "optini"]
 
 [tool.flit.scripts]
 isurus = "isurus:main"

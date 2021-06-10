@@ -28,7 +28,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
     ],
-    description="Mako template preprocessor interface/filter",
+    description="Python class interface to Mako template engine with command line utility",
     install_requires=requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,

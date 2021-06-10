@@ -16,8 +16,7 @@ isurus
 
 
 
-Mako template preprocessor interface/filter
-
+Python class interface to Mako template engine with command line utility
 
 * Free software: MIT license
 * Documentation: https://isurus.readthedocs.io.
@@ -35,6 +34,25 @@ as strings and this is not a problem for my intended use cases,
 which are mostly command-line applications. It may present problems
 as a general library, however. In such cases, it might be better
 to use the original Mako library interfaces.
+
+Examples
+--------
+
+.. code-block:: python
+
+  import isurus
+  # input can be either a file name or template as a string
+  input = 'asdf <% myvar = 1 %> ${myvar} fdsa ${str(pandas.DataFrame)}'
+  template = isurus.Isurus(input)
+  template.add_import('pandas')
+  # evaluating Isurus object in string context returns interpolated content
+  print(template)
+
+.. code-block:: sh
+
+  # on my Mac, pip installs the command line utility in /usr/local/bin
+  isurus -h
+  isurus some_file.md.mako
 
 Credits
 -------
