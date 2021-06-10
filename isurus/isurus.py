@@ -21,17 +21,20 @@ def datestamp(format='%Y-%m-%d_%H-%M-%S'):
 class Isurus:
     '''
     Class that simplifies rendering arbitrary mako templates
-    Supports automatically loading various python modules
-    NOT designed to be memory-efficient (many strings in memory)
+
+    - Supports automatically loading various python modules
+    - NOT designed to be memory-efficient (many strings in memory)
 
     Examples
     --------
 
-    import isurus
-    input = 'asdf <% myvar = 1 %> ${myvar} fdsa ${str(pandas.DataFrame)}'
-    template = isurus.Isurus(input)
-    template.add_import('pandas')
-    print(template)
+    .. code-block:: python
+
+      import isurus
+      input = 'asdf <% myvar = 1 %> ${myvar} fdsa ${str(pandas.DataFrame)}'
+      template = isurus.Isurus(input)
+      template.add_import('pandas')
+      print(template)
 
     Attributes
     ----------
