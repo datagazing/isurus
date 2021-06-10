@@ -27,6 +27,7 @@ Features
 
 * Simple command-line interface for interpreting Mako templates
 * Easy loading of helper modules into template namespaces
+* '#!/usr/bin/env isurus' works for executable templates
 
 NOTE: Isurus is not particularly efficient with memory use. For
 various reasons, it is easiest to read full templates into memory
@@ -48,11 +49,14 @@ Examples
   # evaluating Isurus object in string context returns interpolated content
   print(template)
 
+At the shell:
+
 .. code-block:: sh
 
   # on my Mac, pip installs the command line utility in /usr/local/bin
   isurus -h
   isurus some_file.md.mako
+  # => creates some_file.md with results of template evaluation
 
 Credits
 -------
