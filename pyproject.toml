@@ -1,0 +1,19 @@
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "isurus"
+author = "Brendan Strejcek"
+author-email = "brendan@datagazing.com"
+home-page = "https://github.com/datagazing/isurus"
+classifiers = [ "License :: OSI Approved :: MIT License",]
+description-file = "README.rst"
+requires-python = ">=3.7"
+requires = [
+    "attrs",
+    "Mako",
+]
+
+[tool.flit.scripts]
+isurus = "isurus:main"
