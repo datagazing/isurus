@@ -48,7 +48,7 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 
 lint: ## check style with flake8
-	flake8 isurus tests
+	flake8 optini tests
 
 test: ## run tests quickly with the default Python
 	python3 setup.py test
@@ -57,15 +57,15 @@ test-all: ## run tests on every Python version with tox
 	tox
 
 coverage: ## check code coverage quickly with the default Python
-	coverage run --source isurus setup.py test
+	coverage run --source optini setup.py test
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/isurus.rst
+	rm -f docs/optini.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ isurus
+	sphinx-apidoc -o docs/ optini
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
@@ -79,5 +79,5 @@ release: dist ## package and upload a release
 dist: clean ## builds source and wheel package
 	flit build
 
-install: clean ## install the package to the active Python's site-packages
-	python3 setup.py install
+install: clean dist ## install the package to the active Python's site-packages
+	pip3 install dist/*.tar.gz
