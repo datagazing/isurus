@@ -1,6 +1,5 @@
 import datetime
 import importlib
-import itertools
 import logging
 import os
 import pathlib
@@ -22,10 +21,13 @@ logging.getLogger(myself).addHandler(logging.NullHandler())
 
 ########################################################################
 
+
 def datestamp(format='%Y-%m-%d_%H-%M-%S'):
     return(datetime.datetime.now().strftime(format))
 
+
 ########################################################################
+
 
 @attr.s(auto_attribs=True)
 class Isurus:
@@ -95,7 +97,6 @@ class Isurus:
         # use plus to avoid newlines between pre, body, and post
         return "\n".join(pre) + "\n".join(lines) + "\n".join(post)
         # join everything back together as a single string
-        #return("\n".join(list(itertools.chain(pre, lines, post))) + "\n")
 
     def render(self):
         # to support loading sub-templates
@@ -109,7 +110,7 @@ class Isurus:
         # reading the template into memory seems like best compromise
         tmpl = self.template()
         if self.save:
-            logger.info(f"saving complete intermediate template...")
+            logger.info('saving complete intermediate template...')
             savefile = f"isurus_{datestamp()}.mako"
             open(savefile, 'w').write(tmpl)
             logger.info(f"saved intermediate template: {savefile}")
@@ -133,7 +134,7 @@ class Isurus:
     def verify_import(self, import_statement):
         'examine import statement, flag potential problems'
         module = None
-        element = None
+        # element = None
 
         import_statement = import_statement.strip()
 
@@ -152,8 +153,8 @@ class Isurus:
         pattern = r'^from\s+(\w+)\s+import\s+(\w+)'
         match = re.search(pattern, import_statement)
         if match:
-            module = m.group(1)
-            element = m.group(2)
+            module = match.group(1)
+            # element = match.group(2)
         # checking if element exists without importing is a hassle
         # ignore such additional check for now
 
@@ -201,6 +202,7 @@ class Isurus:
     def __str__(self):
         return self.render()
 
+
 def derive_output(input):
     match = re.search(r'(.*)\.mako$', input, re.IGNORECASE)
     if match:
@@ -209,10 +211,11 @@ def derive_output(input):
         output = f"isurus_out_{datestamp()}.txt"
     logger.debug(f"output = {output}")
     return output
-    
+
+
 def main():
-    desc='Humane Mako template preprocessor interface/filter'
-    #'default': sys.argv[-1],
+    desc = 'Humane Mako template preprocessor interface/filter'
+    # 'default': sys.argv[-1],
     optini.spec.input.help = 'input file'
     optini.spec.input.type = str
     optini.spec.output.help = 'output file'
@@ -233,9 +236,10 @@ def main():
         optini.opt.output = derive_output(optini.opt.input)
     if os.path.exists(optini.opt.output) and not optini.opt.Replace:
         logger.error(f"output file exists: {optini.opt.output}")
-        logger.error(f"replace option (-R/--Replace) not specified")
+        logger.error('replace option (-R/--Replace) not specified')
         sys.exit(1)
     template.renderfile(optini.opt.output)
+
 
 if __name__ == '__main__':
     main()

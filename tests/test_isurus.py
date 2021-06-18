@@ -5,7 +5,7 @@
 
 import unittest
 
-from isurus import isurus
+# from isurus import isurus
 
 
 class TestIsurus(unittest.TestCase):
