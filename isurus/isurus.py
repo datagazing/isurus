@@ -3,6 +3,7 @@ import importlib
 import itertools
 import logging
 import os
+import pathlib
 import re
 import sys
 import typing
@@ -14,8 +15,17 @@ import mako.exceptions
 
 import optini
 
+myself = pathlib.Path(__file__).stem
+
+logger = logging.getLogger(myself)
+logging.getLogger(myself).addHandler(logging.NullHandler())
+
+########################################################################
+
 def datestamp(format='%Y-%m-%d_%H-%M-%S'):
     return(datetime.datetime.now().strftime(format))
+
+########################################################################
 
 @attr.s(auto_attribs=True)
 class Isurus:
@@ -70,6 +80,10 @@ class Isurus:
             lambda x: x.rstrip("\n"),
             self.input.split("\n"),
         )
+        lines = list(lines)
+        if len(lines) > 0 and re.search(r'^#!', lines[0]):
+            logger.debug(f"stripping out #! line: {lines[0]}")
+            lines = lines[1:]
         if self.markdown:
             # disable mako '##' comments
             # ^## conflicts with markdown header syntax
@@ -78,8 +92,10 @@ class Isurus:
                 lines,
             )
         lines = list(lines)
+        # use plus to avoid newlines between pre, body, and post
+        return "\n".join(pre) + "\n".join(lines) + "\n".join(post)
         # join everything back together as a single string
-        return("\n".join(list(itertools.chain(pre, lines, post))) + "\n")
+        #return("\n".join(list(itertools.chain(pre, lines, post))) + "\n")
 
     def render(self):
         # to support loading sub-templates
@@ -93,26 +109,26 @@ class Isurus:
         # reading the template into memory seems like best compromise
         tmpl = self.template()
         if self.save:
-            logging.info(f"saving complete intermediate template...")
+            logger.info(f"saving complete intermediate template...")
             savefile = f"isurus_{datestamp()}.mako"
             open(savefile, 'w').write(tmpl)
-            logging.info(f"saved intermediate template: {savefile}")
+            logger.info(f"saved intermediate template: {savefile}")
         try:
             return(mako.template.Template(text=tmpl, lookup=lookup).render())
         except Exception as e:
-            self.error("mako failed to render template")
-            self.error(f"{e}")
+            logger.error("mako failed to render template")
+            logger.error(f"{e}")
             traceback = mako.exceptions.RichTraceback()
             for (filename, lineno, function, line) in traceback.traceback:
-                logging.debug(f"file {filename}, line {lineno}, in {function}")
-                logging.debug(f"line: {line}")
+                logger.debug(f"file {filename}, line {lineno}, in {function}")
+                logger.debug(f"line: {line}")
             sys.exit(1)
 
     def renderfile(self, filename):
         'write rendered template to file'
         with open(filename, "wt") as f:
             f.write(self.render())
-        logging.info(f"wrote {filename}")
+        logger.info(f"wrote {filename}")
 
     def verify_import(self, import_statement):
         'examine import statement, flag potential problems'
@@ -142,10 +158,10 @@ class Isurus:
         # ignore such additional check for now
 
         if module is None:
-            self.error(f"unable to parse: {import_statement}")
+            logger.error(f"unable to parse: {import_statement}")
         else:
             if importlib.util.find_spec(module) is None:
-                self.error(f"unable to find module {module}")
+                logger.error(f"unable to find module {module}")
                 sys.exit(1)
         return(import_statement)
 
@@ -185,52 +201,39 @@ class Isurus:
     def __str__(self):
         return self.render()
 
-def config(appname):
-    description='Humane Mako template preprocessor interface/filter'
-
-    spec = {
-        'input': {
-            'help': 'input file (Mako template)',
-            'type': str,
-            'default': sys.argv[-1],
-        },
-        'output': {
-            'help': 'output file',
-            'type': str,
-        },
-        'Replace': {
-            'help': 'replace output file if it already exists',
-        },
-        'Markdown': {
-            'help': 'assume markdown input (disable "##" Mako comments)',
-        },
-    }
-    confobj = optini.Config(
-        logging=True,
-        appname=appname,
-        description=description,
-        spec=spec,
-    )
-    return confobj
-
 def derive_output(input):
     match = re.search(r'(.*)\.mako$', input, re.IGNORECASE)
     if match:
         output = match.group(1)
     else:
         output = f"isurus_out_{datestamp()}.txt"
-    logging.debug(f"output = {output}")
+    logger.debug(f"output = {output}")
     return output
     
 def main():
-    confobj = config(appname='isurus')
-    logging.debug(f"input = {optini.opt.input}")
+    desc='Humane Mako template preprocessor interface/filter'
+    #'default': sys.argv[-1],
+    optini.spec.input.help = 'input file'
+    optini.spec.input.type = str
+    optini.spec.output.help = 'output file'
+    optini.spec.output.type = str
+    optini.spec.Replace.help = 'replace output file if it already exists'
+    optini.spec.Markdown.help = 'assume markdown input (no "##" comments)'
+    optini.Config(appname='isurus', desc=desc, logging=True)
+
+    logger.debug(f"input = {optini.opt.input}")
     template = Isurus(optini.opt.input, markdown=optini.opt.Markdown)
+    if optini.opt.input is None:
+        if len(optini.opt._unparsed[0]) > 0:
+            optini.opt.input = optini.opt._unparsed[0]
+    if not os.path.isfile(optini.opt.input):
+        logger.error("no input")
+        sys.exit(1)
     if optini.opt.output is None:
         optini.opt.output = derive_output(optini.opt.input)
     if os.path.exists(optini.opt.output) and not optini.opt.Replace:
-        logging.error(f"output file exists: {optini.opt.output}")
-        logging.error(f"replace option (-R/--Replace) not specified")
+        logger.error(f"output file exists: {optini.opt.output}")
+        logger.error(f"replace option (-R/--Replace) not specified")
         sys.exit(1)
     template.renderfile(optini.opt.output)
 
