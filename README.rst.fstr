@@ -1,0 +1,25 @@
+======
+isurus
+======
+
+
+.. image:: https://img.shields.io/pypi/v/isurus.svg
+        :target: https://pypi.python.org/pypi/isurus
+
+.. image:: https://img.shields.io/travis/datagazing/isurus.svg
+        :target: https://travis-ci.com/datagazing/isurus
+
+.. image:: https://readthedocs.org/projects/isurus/badge/?version=latest
+        :target: https://isurus.readthedocs.io/en/latest/?version=latest
+        :alt: Documentation Status
+
+
+{__doc__}
+
+Credits
+-------
+
+This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
+
+.. _Cookiecutter: https://github.com/audreyr/cookiecutter
+.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage

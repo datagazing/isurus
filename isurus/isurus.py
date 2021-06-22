@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+
+"""See top level package docstring for documentation"""
+
 import datetime
 import importlib
 import logging
@@ -17,7 +21,11 @@ import optini
 myself = pathlib.Path(__file__).stem
 
 logger = logging.getLogger(myself)
-logging.getLogger(myself).addHandler(logging.NullHandler())
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(name)s: %(levelname)s: %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.propagate = False
 
 ########################################################################
 
