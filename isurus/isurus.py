@@ -21,11 +21,7 @@ import optini
 myself = pathlib.Path(__file__).stem
 
 logger = logging.getLogger(myself)
-handler = logging.StreamHandler()
-formatter = logging.Formatter('%(name)s: %(levelname)s: %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-logger.propagate = False
+logging.getLogger(myself).addHandler(logging.NullHandler())
 
 ########################################################################
 
